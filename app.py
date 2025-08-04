@@ -1,12 +1,14 @@
+import os
 from flask import Flask, jsonify, send_from_directory
 from flask_cors import CORS
-import os
 import json
 
-app = Flask(__name__, static_folder="../frontend", static_url_path="")
+# Compute absolute frontend path
+frontend_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "../frontend"))
+app = Flask(__name__, static_folder=frontend_path, static_url_path="")
 CORS(app)
 
-# Route to serve static frontend pages
+# Serve index.html at root
 @app.route("/")
 def serve_index():
     return send_from_directory(app.static_folder, "index.html")
@@ -19,7 +21,12 @@ def serve_dashboard():
 def serve_leaderboard():
     return send_from_directory(app.static_folder, "leaderboard.html")
 
-# API to return intern data from data.json
+# Serve static files like JS/CSS
+@app.route("/<path:path>")
+def serve_static_file(path):
+    return send_from_directory(app.static_folder, path)
+
+# API: Intern data
 @app.route("/api/intern")
 def intern_data():
     json_path = os.path.join(os.path.dirname(__file__), "data.json")
@@ -27,7 +34,7 @@ def intern_data():
         data = json.load(file)
     return jsonify(data)
 
-# API for dummy leaderboard (can be made dynamic later)
+# API: Leaderboard data
 @app.route("/api/leaderboard")
 def leaderboard():
     return jsonify([
@@ -38,4 +45,4 @@ def leaderboard():
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
-    app.run(host='0.0.0.0', port=port)
+    app.run(host="0.0.0.0", port=port)
