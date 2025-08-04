@@ -37,5 +37,5 @@ def leaderboard():
     ])
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 5000))  # Get the port from the environment if available
-    app.run(host='0.0.0.0', port=port, debug=True)  # Bind to 0.0.0.0 so Render can access it
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host='0.0.0.0', port=port, debug=True)
